@@ -1,0 +1,179 @@
+/* THEME COLOURS: dark theme by default; --fade is the left overlay on the hero so text stays readable */
+:root{--bg:#030b24;--bg2:#06133a;--card:rgba(10,28,78,.55);--line:rgba(56,120,255,.28);--text:#f2f6ff;--mute:#9db0dc;--acc:#22d3ee;--acc2:#3b82f6;--ring:#0a3a8c;--fade:#030b24}
+[data-theme=light]{--bg:#eaf2ff;--bg2:#fff;--card:rgba(255,255,255,.85);--line:rgba(59,130,246,.3);--text:#0b1c44;--mute:#52668f;--ring:#cfe3ff;--fade:#eaf2ff}
+*{box-sizing:border-box;margin:0}
+
+/* BASE: page, app card and shared button styles */
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:20px}
+.app{max-width:1120px;margin:auto;border:1px solid var(--line);border-radius:26px;background:linear-gradient(180deg,var(--bg2),var(--bg));overflow:hidden;box-shadow:0 0 40px rgba(34,100,255,.18)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+
+/* TOP BAR: logo, tabs, theme toggle */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 30px;border-bottom:1px solid var(--line);gap:16px}
+.logo{display:flex;align-items:center;gap:10px;font-size:26px;font-weight:700;color:var(--text);text-decoration:none}
+.tabs{display:flex;gap:34px}.tabs .tab{padding:10px 0;color:var(--text);font-weight:500;border-bottom:2px solid transparent}
+.tabs .tab.active{color:var(--acc);border-color:var(--acc)}
+.actions{display:flex;align-items:center;gap:14px}
+.toggle{display:flex;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:3px}
+.toggle button{width:34px;height:30px;border-radius:11px;font-size:15px}.toggle .on{background:var(--acc);color:#02203a}
+.avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--card);border:1px solid var(--line);font-weight:700;font-size:13px;color:var(--acc)}
+
+/* VIEWS: only the .active view is shown */
+.view{display:none}.view.active{display:block}
+
+/* HERO: city, temperature and background photo (--sky is set per weather by app.js) */
+.hero{position:relative;isolation:isolate;overflow:hidden;padding:30px;min-height:340px}
+
+/* Photo layer: always visible, blurred, behind the content */
+.hero::before{content:"";position:absolute;inset:-14px;z-index:-2;background:url(hero.jpg) center right/cover no-repeat;filter:blur(2px)}
+
+/* Tint layer: left fade for text readability + weather colour on top of the photo */
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,var(--fade) 18%,transparent 75%),var(--tint,transparent)}
+.search-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:30px}
+.search{position:relative;display:flex;align-items:center;gap:10px;width:min(100%,332px);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:0 14px;height:42px}
+.search input{flex:1;background:none;border:0;color:var(--text);font:inherit;outline:0;min-width:0}.search input::placeholder{color:var(--mute)}
+.results{position:absolute;top:46px;left:0;right:0;z-index:5;list-style:none;padding:6px;background:var(--bg2);border:1px solid var(--line);border-radius:10px}
+.results li{padding:9px 10px;border-radius:7px;cursor:pointer;font-size:14px}.results li:hover,.results li:focus{background:var(--card)}
+.results small{color:var(--mute)}
+.loc-btn{height:42px;padding:0 18px;border:1px solid var(--line);background:var(--card);border-radius:10px;font-size:14px}
+.place{display:flex;gap:10px;align-items:center}.pin{font-size:22px}
+h1{font-size:28px;font-weight:600}.place p{color:var(--mute);font-size:14px}
+.now{display:flex;align-items:center;gap:36px;flex-wrap:wrap;margin-top:6px}
+.temp{display:flex;align-items:flex-start;font-size:104px;font-weight:600;line-height:1.1}.temp sup{font-size:60px;margin-top:6px}
+.big-icon{font-size:70px;margin:16px 0 0 10px}
+.cond h2{font-size:21px;font-weight:600}.cond p{color:var(--mute);margin-top:8px;font-size:15px}.clock{color:var(--acc)!important}
+.status{margin-top:10px;font-size:14px;color:var(--acc)}.status.err{color:#fb7185}
+
+/* METRIC CARDS: humidity, wind, pressure, visibility */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:0 20px;margin-top:-30px;position:relative}
+.metric,.panel,/* TIP BANNER */
+.banner{background:var(--card);border:1px solid var(--line);border-radius:14px;backdrop-filter:blur(8px)}
+.metric{display:flex;gap:16px;align-items:center;padding:18px}
+.ring{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:var(--ring);border:1px solid var(--acc2);font-style:normal;font-size:24px;flex:none}
+.metric small{font-size:14px}.metric b{display:block;font-size:30px;font-weight:600}.metric em{font-size:18px;font-style:normal;font-weight:500}
+.delta{display:block;color:#60a5fa;font-size:13px;font-weight:600}.vs{font-size:13px;color:var(--mute)}
+
+/* PANELS: 5-day, hourly and precipitation chart; .cell is one day/hour tile */
+.panels{display:grid;grid-template-columns:1.25fr 1fr .95fr;gap:14px;padding:14px 20px 0}
+.panel{padding:18px}.panel header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+h3{font-size:17px;font-weight:600}.panel a{color:var(--acc);font-size:13px;text-decoration:none;font-weight:600}
+.chip{font-size:12px;border:1px solid var(--line);padding:5px 10px;border-radius:7px}
+.days,.hours{display:grid;gap:8px}.days{grid-template-columns:repeat(5,1fr)}.hours{grid-template-columns:repeat(6,1fr)}
+.cell{display:flex;flex-direction:column;align-items:center;gap:7px;padding:12px 4px;border:1px solid var(--line);border-radius:10px;font-size:13px;text-align:center;min-width:0}
+.cell.sel{border-color:var(--acc);box-shadow:0 0 14px rgba(34,211,238,.4);background:rgba(34,211,238,.08)}
+.cell .ic{font-size:30px}.cell b{font-size:16px;font-weight:600}.cell small{color:var(--mute);font-size:11px}.cell .rain{color:#60a5fa;font-size:12px;font-weight:600}
+.banner{display:flex;align-items:center;gap:18px;margin:14px 20px 20px;padding:18px 22px}
+.banner div:not(.ring){flex:1}.banner b{font-size:18px}.banner p{color:var(--mute);font-size:14px;margin-top:3px}
+.cta{background:var(--acc);color:#02203a;font-weight:700;padding:14px 26px;border-radius:12px;white-space:nowrap}
+#chart svg{width:100%;height:auto;display:block}
+
+/* MAPS VIEW and generic full-width panel */
+.full{margin:20px}.full iframe{width:100%;height:480px;border:0;border-radius:10px}
+.aqi{display:flex;gap:24px;flex-wrap:wrap;align-items:center}
+.aqi-main{width:150px;height:150px;border-radius:50%;border:6px solid var(--acc);display:grid;place-content:center;text-align:center}
+.aqi-main b{font-size:44px}.aqi-main span{font-size:13px;color:var(--mute)}
+.aqi-grid{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+.aqi-grid div{border:1px solid var(--line);border-radius:10px;padding:14px}.aqi-grid small{color:var(--mute)}.aqi-grid b{display:block;font-size:22px;margin-top:4px}
+
+/* MOBILE BOTTOM TAB BAR (shown in the 700px media query) */
+.bottom{display:none}
+
+/* TABLET: stack the panels, two metric cards per row */
+@media(max-width:920px){.panels{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}}
+
+/* MOBILE: single column, bottom tab bar, compact sizes */
+@media(max-width:700px){
+body{padding:0}.app{border-radius:0;border:0;padding-bottom:70px}
+.tabs,.avatar{display:none}.topbar{padding:14px 18px}.logo{font-size:22px}
+.hero{padding:18px;min-height:0}.temp{font-size:72px}.temp sup{font-size:40px}.big-icon{font-size:52px}.now{gap:12px}
+.search{width:100%}.loc-btn{height:36px;font-size:13px}.search-row{margin-bottom:18px;gap:10px}
+.metrics{padding:0 14px;gap:10px;margin-top:-6px}.metric{padding:12px;gap:10px}.ring{width:42px;height:42px;font-size:18px}.metric b{font-size:22px}
+.panels{padding:10px 14px 0}.days{gap:5px}.cell{padding:8px 2px}.cell .ic{font-size:22px}.cell b{font-size:12px}
+.hours{grid-template-columns:repeat(3,1fr)}
+.banner{display:none}.full{margin:14px}.full iframe{height:380px}
+.bottom{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:9;background:var(--bg2);border-top:1px solid var(--line);padding:8px 0 12px}
+.bottom .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:var(--mute)}
+.bottom .tab span{font-size:20px}.bottom .tab.active{color:var(--acc)}
+}
+@media(prefers-reduced-motion:no-preference){.cell,.cta{transition:transform .15s,box-shadow .15s}.cell:hover{transform:translateY(-2px)}}
+
+/* SKY BACKGROUNDS: app.js sets data-sky to sunny, cloudy, rain, snow or night */
+.hero[data-sky=sunny]{--tint:rgba(47,128,237,.15)}
+.hero[data-sky=cloudy]{--tint:rgba(86,101,138,.4)}
+.hero[data-sky=rain]{--tint:rgba(20,29,54,.55)}
+.hero[data-sky=snow]{--tint:rgba(185,200,226,.4)}
+.hero[data-sky=night]{--tint:rgba(4,10,34,.3)}
+
+/* LOADING SPINNER */
+.spin{display:inline-block;width:16px;height:16px;margin-right:8px;vertical-align:-3px;border:2px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.hero.loading .now,.hero.loading .place{opacity:.45}
+@media(prefers-reduced-motion:reduce){.spin{animation-duration:2s}}
+
+/* ICONS: SVG sizing and colours (replaced the emoji) */
+svg{display:block}
+.ring svg{width:26px;height:26px;stroke:var(--acc);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ring svg .f{fill:var(--acc);stroke:none}
+.search>svg{width:20px;height:20px;stroke:var(--acc);fill:none;stroke-width:2;stroke-linecap:round;flex:none}
+.loc-btn{display:inline-flex;align-items:center;gap:8px}
+.loc-btn svg,.pin svg{width:20px;height:20px;stroke:var(--acc);fill:none;stroke-width:2;stroke-linejoin:round}
+.pin svg{width:26px;height:26px}
+.ic-s{display:inline-flex;vertical-align:-3px;margin-right:4px}.ic-s svg{width:16px;height:16px;stroke:var(--acc);fill:none;stroke-width:2;stroke-linecap:round}
+.clock{display:flex;align-items:center;gap:6px}
+.big-icon{display:inline-block;width:84px;height:88px;margin:14px 0 0 12px}.big-icon svg{width:100%;height:100%;filter:drop-shadow(0 0 14px rgba(250,204,21,.35))}
+.cell .ic{display:block;width:38px;height:40px}.cell .ic svg{width:100%;height:100%}
+.dr{display:inline-block;width:10px;height:10px;fill:#60a5fa;margin-right:3px}
+.cell .rain{display:flex;align-items:center}
+.cell.sel{box-shadow:0 0 0 1px var(--acc),0 0 18px rgba(34,211,238,.45)}
+.menu{display:none;width:40px;height:40px;border:1px solid var(--line);background:var(--card);border-radius:12px;place-items:center}
+.menu svg{width:20px;height:20px;stroke:var(--acc);fill:none;stroke-width:2.2;stroke-linecap:round}
+.more,.mob{display:none}
+.bottom .tab span svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media(max-width:700px){
+.menu{display:grid}.topbar .actions{gap:10px}
+.big-icon{width:58px;height:62px;margin:10px 0 0 8px}
+.cell .ic{width:26px;height:28px}
+.metric b{font-size:20px}
+.hourly header{margin:0;cursor:pointer}.hourly .more{display:block;color:var(--acc)}.mob{display:inline-flex}
+.hourly h3{font-size:15px}.daily h3{font-size:15px}.hourly .hours{display:none;margin-top:12px}.hourly.open .hours{display:grid}
+.hourly{padding:14px 16px}
+}
+.spin[hidden]{display:none}
+
+/* AIR QUALITY VIEW: photo background, gauge, pollutant cards, bottom summary strip */
+#view-air{background:linear-gradient(rgba(3,11,36,.5),rgba(3,11,36,.8)),url(assets/hero.jpg) center/cover}
+[data-theme=light] #view-air{background:linear-gradient(rgba(234,242,255,.5),rgba(234,242,255,.85)),url(assets/hero.jpg) center/cover}
+.aq-wrap{padding:30px 40px 40px}
+.panel.aq{padding:24px;border-radius:20px;border-color:rgba(56,140,255,.6);box-shadow:0 0 36px rgba(37,99,235,.28);background:rgba(6,19,58,.55)}
+[data-theme=light] .panel.aq{background:rgba(255,255,255,.8)}
+.aq-head{display:flex;align-items:center;gap:14px;padding-bottom:16px;border-bottom:1px solid var(--line);margin:0 0 20px!important}
+.aq-head h2{font-size:24px;font-weight:600}.aq-head p{color:var(--mute);font-size:14px;margin-top:2px;color:#67b7ff}
+.lf svg,.gl svg,.pic svg{stroke:var(--acc);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.lf{display:grid;place-items:center;width:44px;height:44px}.lf svg{width:36px;height:36px;filter:drop-shadow(0 0 8px var(--acc))}
+.city-pill{margin-left:auto;display:flex;align-items:center;gap:10px;background:rgba(10,28,78,.8);border:1px solid var(--line);padding:11px 16px;border-radius:14px;font-weight:600;font-size:14px}
+.city-pill svg{width:18px;height:18px;stroke:#c4b5fd;fill:none;stroke-width:2}.city-pill svg:last-child{stroke:var(--text);width:16px}
+.aq-body{display:grid;grid-template-columns:330px 1fr;gap:0}
+.gauge{position:relative;width:240px;height:260px;margin:0 auto}
+.gauge svg{width:240px;height:240px;filter:drop-shadow(0 0 12px rgba(34,211,238,.5))}
+.trk,.arc{fill:none;stroke-width:12;stroke-linecap:round}.trk{stroke:rgba(56,120,255,.2);stroke-dasharray:414.7 553}.arc{stroke:url(#gg);stroke-dasharray:0 553;transition:stroke-dasharray .8s}
+.g-in{position:absolute;inset:0 0 20px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.g-in b{font-size:64px;font-weight:700;line-height:1}.g-in span{color:var(--mute);font-size:14px;margin-top:6px}.gl svg{width:22px;height:22px;margin-bottom:6px}
+.pill{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);background:#2fe6a0;color:#03261b;font-style:normal;font-weight:700;font-size:13px;padding:6px 18px;border-radius:999px;white-space:nowrap;box-shadow:0 0 14px rgba(47,230,160,.5)}
+.pol{border-left:1px solid var(--line);padding-left:24px}.pol h3{font-size:19px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.inf svg{width:18px;height:18px;stroke:var(--acc);fill:none;stroke-width:2;stroke-linecap:round}
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.pcard{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:start;padding:16px;border:1px solid var(--line);border-radius:14px;background:rgba(10,28,78,.5)}
+.pic{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--ring);border:1px solid var(--acc2);flex:none;font-style:normal}
+.pic svg{width:22px;height:22px}.pic .f{fill:var(--acc);stroke:none}
+.pcard .pn{display:block;font-weight:600;font-size:15px}.pv{display:block;font-size:26px;font-weight:600}.pcard small{color:var(--mute);font-size:12px}
+.bar{grid-column:1/-1;height:6px;border-radius:6px;background:rgba(56,120,255,.2);margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;border-radius:6px;background:#22e58f}
+.aq-bottom{display:grid;grid-template-columns:repeat(4,1fr);margin-top:20px;border:1px solid var(--line);border-radius:14px;background:rgba(10,28,78,.5);padding:14px 0}
+.aq-bottom>div{display:flex;gap:14px;align-items:center;padding:0 20px;border-left:1px solid var(--line)}.aq-bottom>div:first-child{border:0}
+.aq-bottom small{display:block;color:var(--mute);font-size:13px}.aq-bottom b{display:block;font-size:15px;font-weight:600;margin-top:2px}.aq-bottom em{display:block;font-style:normal;font-size:12px;color:#2fe6a0}.aq-bottom em.m{color:var(--mute)}
+@media(max-width:1000px){.pgrid{grid-template-columns:repeat(2,1fr)}.aq-bottom{grid-template-columns:repeat(2,1fr);gap:14px 0}.aq-bottom>div:nth-child(3){border:0}}
+@media(max-width:760px){
+.aq-wrap{padding:14px}.panel.aq{padding:16px}.aq-body{grid-template-columns:1fr}
+.pol{border:0;padding:20px 0 0}.aq-head h2{font-size:20px}.city-pill{padding:9px 12px}.city-pill span{display:none}
+.aq-bottom{grid-template-columns:1fr;gap:14px;padding:14px 0}.aq-bottom>div{border:0;padding:0 16px}
+}

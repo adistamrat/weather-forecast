@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atmos – Weather Forecast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- Hidden SVG gradients (sun, cloud, moon) shared by every weather icon -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde047"/><stop offset="1" stop-color="#f59e0b"/></linearGradient><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#b9cdf5"/></linearGradient><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e9e3ff"/><stop offset="1" stop-color="#8b7cf6"/></linearGradient></defs></svg>
+<div class="app">
+  <!-- Top bar: logo, desktop tabs, theme toggle, avatar and mobile menu -->
+<header class="topbar">
+    <a class="logo" href="#forecast"><svg viewBox="0 0 48 32" width="38" height="26" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs><path d="M12 28a9 9 0 0 1-1-17.9A12 12 0 0 1 34 8a10 10 0 0 1 3 20z" fill="none" stroke="url(#lg)" stroke-width="3" stroke-linejoin="round"/></svg><span>Atmos</span></a>
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-view="forecast">Forecast</button>
+      <button class="tab" data-view="maps">Maps</button>
+      <button class="tab" data-view="air">Air Quality</button>
+    </nav>
+    <div class="actions">
+      <div class="toggle" role="group" aria-label="Theme">
+        <button id="lightBtn" aria-label="Light theme">☀</button>
+        <button id="darkBtn" aria-label="Dark theme" class="on">☾</button>
+      </div>
+      <a href="https://adisalem.netlify.app/"><span class="avatar">AT</span></a><button class="menu" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </header>
+
+  <!-- Main content: three views (Forecast, Maps, Air Quality), only one visible at a time -->
+<main>
+    <!-- VIEW 1: Forecast (search, current weather, metrics, forecasts, chart) -->
+<section class="view active" id="view-forecast">
+      <!-- Hero: search bar, city name, temperature, condition and loading/error status -->
+<div class="hero">
+        <div class="search-row">
+          <form class="search" id="searchForm" autocomplete="off">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+            <input id="q" type="text" placeholder="Search for a city..." aria-label="Search for a city">
+            <ul class="results" id="results" hidden></ul>
+          </form>
+          <button class="loc-btn" id="locBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg> Use My Location</button>
+        </div>
+        <div class="place"><span class="pin"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></span><div><h1 id="city">Addis Ababa</h1><p id="country">Ethiopia</p></div></div>
+        <div class="now">
+          <div class="temp"><span id="temp">--</span><sup>°</sup><span class="big-icon" id="icon">⛅</span></div>
+          <div class="cond">
+            <h2 id="cond">Loading…</h2>
+            <p id="hl">H: --° &nbsp; L: --°</p>
+            <p class="clock"><span class="ic-s"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span> <span id="time">--</span></p>
+          </div>
+        </div>
+        <p class="status" id="status" role="status"><span class="spin" id="spin" hidden></span><span id="stxt"></span></p>
+      </div>
+
+      <!-- Four metric cards: humidity, wind, pressure, visibility (with change vs. yesterday) -->
+<div class="metrics">
+        <article class="metric"><i class="ring"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="f" d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></i><div><small>Humidity</small><b><span id="hum">--</span><em>%</em></b><span class="delta" id="dHum"></span><span class="vs">vs. yesterday</span></div></article>
+        <article class="metric"><i class="ring"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h10a3 3 0 1 0-3-3M3 14h14a3 3 0 1 1-3 3M3 19h7"/></svg></i><div><small>Wind</small><b><span id="wind">--</span><em> km/h</em></b><span class="delta" id="dWind"></span><span class="vs">vs. yesterday</span></div></article>
+        <article class="metric"><i class="ring"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="9"/><path d="M12 13l4-5M5 9l1.5 1M19 9l-1.5 1M12 4v1.5"/></svg></i><div><small>Pressure</small><b><span id="pres">--</span><em> hPa</em></b><span class="delta" id="dPres"></span><span class="vs">vs. yesterday</span></div></article>
+        <article class="metric"><i class="ring"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle class="f" cx="12" cy="12" r="3"/></svg></i><div><small>Visibility</small><b><span id="vis">--</span><em> km</em></b><span class="delta" id="dVis"></span><span class="vs">vs. yesterday</span></div></article>
+      </div>
+
+      <!-- Three panels: 5-day forecast, hourly forecast and precipitation chart (filled by app.js) -->
+<div class="panels">
+        <section class="panel daily"><header><h3><span class="ic-s"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span> 5-Day Forecast</h3><a href="#" id="viewAll">View All →</a></header><div class="days" id="days"></div></section>
+        <section class="panel hourly"><header id="hourHead"><h3><span class="ic-s mob"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Today's Hourly Forecast</h3><span class="more">→</span></header><div class="hours" id="hours"></div></section>
+        <section class="panel precip"><header><h3>Precipitation</h3><span class="chip">Next 5 Days ⌄</span></header><div id="chart"></div></section>
+      </div>
+
+      <!-- Weather tip banner with a shortcut to the Maps tab -->
+<div class="banner"><i class="ring"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h10a3 3 0 1 0-3-3M3 14h14a3 3 0 1 1-3 3M3 19h7"/></svg></i><div><b id="tipT">Enjoy the weather</b><p id="tipD">Stay prepared, stay comfortable.</p></div><button class="cta" data-go="maps">Explore Maps →</button></div>
+    </section>
+
+    <!-- VIEW 2: Maps (embedded live weather map, URL set in app.js) -->
+<section class="view" id="view-maps">
+      <div class="panel full"><header><h3>Weather Map</h3></header><iframe id="map" title="Weather map" loading="lazy"></iframe></div>
+    </section>
+
+    <!-- VIEW 3: Air Quality (gauge, pollutant cards and summary strip, filled by app.js) -->
+<section class="view" id="view-air">
+      <div class="aq-wrap"><div class="panel aq">
+        <header class="aq-head"><i class="lf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19c0-9 5-14 15-14 0 10-5 15-14 15M5 19l8-8"/></svg></i><div><h2>Air Quality</h2><p>Clean air. Healthier tomorrow.</p></div><button class="city-pill" id="aqCityBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg><span id="aqCity">Addis Ababa</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></header>
+        <div class="aq-body">
+          <div class="gauge"><svg viewBox="0 0 200 200" aria-hidden="true"><defs><linearGradient id="gg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#2563eb"/></linearGradient></defs><circle cx="100" cy="100" r="88" class="trk" transform="rotate(135 100 100)"/><circle id="arc" cx="100" cy="100" r="88" class="arc" transform="rotate(135 100 100)"/></svg>
+            <div class="g-in"><i class="gl"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19c0-9 5-14 15-14 0 10-5 15-14 15M5 19l8-8"/></svg></i><b id="aqi">--</b><span>US AQI</span></div><em class="pill" id="aqiL">--</em></div>
+          <div class="pol"><h3>Pollutant Levels <span class="inf"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></span></h3><div class="pgrid"><article class="pcard"><i class="pic"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="f"><circle cx="12" cy="12" r="1.6"/><circle cx="6" cy="8" r="1.2"/><circle cx="18" cy="8" r="1.2"/><circle cx="6" cy="16" r="1.2"/><circle cx="18" cy="16" r="1.2"/><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="19" r="1.2"/></g></svg></i><div><b class="pn">PM2.5</b><span class="pv" id="v-pm25">--</span><small>µg/m³</small></div><span class="bar"><i id="b-pm25"></i></span></article><article class="pcard"><i class="pic"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="f"><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/><circle cx="17" cy="7" r="1.5"/><circle cx="7" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="17" cy="12" r="1.5"/><circle cx="7" cy="17" r="1.5"/><circle cx="12" cy="17" r="1.5"/><circle cx="17" cy="17" r="1.5"/></g></svg></i><div><b class="pn">PM10</b><span class="pv" id="v-pm10">--</span><small>µg/m³</small></div><span class="bar"><i id="b-pm10"></i></span></article><article class="pcard"><i class="pic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="17" r="2.5"/><circle cx="12" cy="8" r="2.5"/><circle cx="18" cy="15" r="2.5"/><path d="M8 15l2.5-5M14 9.5l3 3"/></svg></i><div><b class="pn">Ozone (O₃)</b><span class="pv" id="v-o3">--</span><small>µg/m³</small></div><span class="bar"><i id="b-o3"></i></span></article><article class="pcard"><i class="pic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 19a4.5 4.5 0 0 1-.5-9A6 6 0 0 1 18 9a4.8 4.8 0 0 1 .5 10z"/><path d="M9 6a3 3 0 0 1 5-1.5"/></svg></i><div><b class="pn">NO₂</b><span class="pv" id="v-no2">--</span><small>µg/m³</small></div><span class="bar"><i id="b-no2"></i></span></article></div></div>
+        </div>
+        <div class="aq-bottom">
+          <div><i class="pic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8c3-3 6 3 9 0s6 3 9 0M3 13c3-3 6 3 9 0s6 3 9 0M3 18c3-3 6 3 9 0s6 3 9 0"/></svg></i><span><small>Air Quality Index</small><b id="bIdx">--</b><em id="bCat">--</em></span></div>
+          <div><i class="pic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11z"/><path d="M7 12h3l1.5-2 2 4 1.2-2H17"/></svg></i><span><small>Health Advice</small><b id="bAdv">--</b><em class="m" id="bAdv2"></em></span></div>
+          <div><i class="pic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19c0-9 5-14 15-14 0 10-5 15-14 15M5 19l8-8"/></svg></i><span><small>Dominant Pollutant</small><b id="bDom">--</b><em class="m" id="bDomV"></em></span></div>
+          <div><i class="pic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h10a3 3 0 1 0-3-3M3 14h14a3 3 0 1 1-3 3M3 19h7"/></svg></i><span><small>Last Updated</small><b id="bUpd">--</b><em class="m">Today</em></span></div>
+        </div>
+      </div></div>
+    </section>
+  </main>
+
+  <!-- Mobile bottom tab bar (hidden on desktop) -->
+<nav class="bottom" id="bottom">
+    <button class="tab active" data-view="forecast"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18a4.5 4.5 0 0 1-.5-9A6 6 0 0 1 18 8.5a4.8 4.8 0 0 1 .5 9.5z"/></svg></span>Forecast</button>
+    <button class="tab" data-view="maps"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></span>Maps</button>
+    <button class="tab" data-view="air"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19c0-9 5-14 15-14 0 10-5 15-14 15M5 19l8-8"/></svg></span>Air Quality</button>
+  </nav>
+</div>
+<!-- All behaviour lives in app.js -->
+<script src="app.js"></script>
+</body>
+</html>
